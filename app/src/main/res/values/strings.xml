@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="toplist">Toplista</string>
+    <string name="recommended">Ajánlott</string>
+    <string name="categories">Kategóriák</string>
+    <string name="watchit">watch IT.</string>
+    <string name="popular">Felkapott</string>
+    <string name="liked">Kedvelt</string>
+</resources>

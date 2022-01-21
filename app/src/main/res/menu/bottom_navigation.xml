@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/popular"
+        android:checkableBehavior="single"
+        android:icon="@drawable/list_30"
+        android:title="@string/popular"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/recommendation"
+        android:checkableBehavior="single"
+        android:icon="@drawable/recommendation_30"
+        android:title="@string/recommended"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/categories"
+        android:checkableBehavior="single"
+        android:icon="@drawable/category_30"
+        android:title="@string/categories"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/liked"
+        android:checkableBehavior="single"
+        android:icon="@drawable/like"
+        android:title="@string/liked"
+        app:showAsAction="never">
+    </item>
+</menu>
