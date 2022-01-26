@@ -39,7 +39,7 @@ object NetworkManager {
     }
 
     fun searchByTitle(queryString: String?) : Call<MovieResult?>? {
-        return movieApi.searchByTitle(API_KEY, queryString, "hu",  "vote_average.desc", 150)
+        return movieApi.searchByTitle(API_KEY, queryString, "hu",  "vote_average.desc")
     }
 
 }

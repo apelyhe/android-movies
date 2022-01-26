@@ -21,14 +21,16 @@ import androidx.recyclerview.widget.RecyclerView
 import hu.homework.pelyheadam.R
 import hu.homework.pelyheadam.entities.MovieResult
 import hu.homework.pelyheadam.data.Result
+import hu.homework.pelyheadam.interfaces.InitializeBottomMenu
 
-class PopularActivity() : AppCompatActivity(), OnMovieClickListener {
+class PopularActivity() : AppCompatActivity(), OnMovieClickListener, InitializeBottomMenu {
 
     private lateinit var binding : ActivityPopularBinding
     private lateinit var adapter : PopularAdapter
     private lateinit var rowBinding: PopularItemBinding
     private var popularMovies : MovieResult? = null
     private var page = 1
+    private var totalPages = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +43,7 @@ class PopularActivity() : AppCompatActivity(), OnMovieClickListener {
     }
 
     // initialize click listener of the bottom menu
-    private fun initBottomMenu() {
+    override fun initBottomMenu() {
         binding.bottomNavigationView.menu.getItem(0).isChecked = true
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
             when(it.itemId){
@@ -121,6 +123,9 @@ class PopularActivity() : AppCompatActivity(), OnMovieClickListener {
             override fun onResponse(call: Call<MovieResult?>, response: Response<MovieResult?>) {
                 Log.d(TAG, "onResponse: " + response.code())
                 if (response.isSuccessful) {
+                    if (totalPages == -1) {
+                        totalPages = response.body()?.total_pages!!
+                    }
                     displaySearchResults(response.body())
                 } else {
                     Log.d(TAG, "Error: " + response.message())
@@ -129,13 +134,12 @@ class PopularActivity() : AppCompatActivity(), OnMovieClickListener {
 
             override fun onFailure(call: Call<MovieResult?>, t: Throwable) {
                 t.printStackTrace()
-                Toast.makeText(this@PopularActivity, "Network request error occured, check LOG", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@PopularActivity, "Hálózati hiba lépett fel! Ellenőrizd az internet kapcsolatod!", Toast.LENGTH_LONG).show()
             }
 
         })
     }
 
-    // display the search results
     private fun displaySearchResults(body : MovieResult?) {
         binding.cvProgress.visibility = View.GONE
 
@@ -202,12 +206,14 @@ class PopularActivity() : AppCompatActivity(), OnMovieClickListener {
                 if (dy > 0) {
                     // if the last item is visible, show the progress bar, and request the next page
                     if (isLastVisible()) {
-                        binding.cvProgress.visibility = View.VISIBLE
-                        binding.rvPopular.removeOnScrollListener(this)
-                        page++
-                        val layoutManager = binding.rvPopular.layoutManager as LinearLayoutManager
-                        val pos = layoutManager.findFirstVisibleItemPosition()
-                        loadPopularMovies(pos)
+                        if (page + 1 <= totalPages) {
+                            binding.cvProgress.visibility = View.VISIBLE
+                            binding.rvPopular.removeOnScrollListener(this)
+                            page++
+                            val layoutManager = binding.rvPopular.layoutManager as LinearLayoutManager
+                            val pos = layoutManager.findFirstVisibleItemPosition()
+                            loadPopularMovies(pos)
+                        }
                     }
                 }
             }

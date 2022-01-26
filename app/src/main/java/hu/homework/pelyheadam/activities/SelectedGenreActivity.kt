@@ -1,6 +1,7 @@
 package hu.homework.pelyheadam.activities
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +17,7 @@ import hu.homework.pelyheadam.adapter.SelectedGenreAdapter
 import hu.homework.pelyheadam.databinding.ActivitySelectedGenreBinding
 import hu.homework.pelyheadam.entities.MovieResult
 import hu.homework.pelyheadam.data.Result
+import hu.homework.pelyheadam.interfaces.InitializeBottomMenu
 import hu.homework.pelyheadam.interfaces.OnMovieClickListener
 import hu.homework.pelyheadam.lists.GenreTypes
 import hu.homework.pelyheadam.network.NetworkManager
@@ -23,13 +25,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener {
+class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener, InitializeBottomMenu {
 
     private lateinit var binding: ActivitySelectedGenreBinding
     private lateinit var adapter: SelectedGenreAdapter
     private var genreId: Int = 0
     private var movies: MovieResult? = null
     private var page = 1
+    private var totalPages = -1
 
     companion object {
         var GENRE_ID = "0"
@@ -43,13 +46,13 @@ class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener {
         genreId = intent.getIntExtra("GENRE_ID", 0)
 
         val types = GenreTypes()
-
+        //Log.e(TAG, "ID:    " + genreId)
         supportActionBar?.setTitle(types.getGenreById(genreId))
         initBottomMenu()
         initRecyclerView()
     }
 
-    private fun initBottomMenu() {
+    override fun initBottomMenu() {
         binding.bottomNavigationView.menu.getItem(2).isChecked = true
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
             when(it.itemId){
@@ -129,6 +132,9 @@ class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener {
             override fun onResponse(call: Call<MovieResult?>, response: Response<MovieResult?>) {
                 Log.d(ContentValues.TAG, "onResponse: " + response.code())
                 if (response.isSuccessful) {
+                    if (totalPages == -1) {
+                        totalPages = response.body()?.total_pages!!
+                    }
                     displaySearchResults(response.body())
                 } else {
                     Log.d(ContentValues.TAG, "Error: " + response.message())
@@ -137,7 +143,7 @@ class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener {
 
             override fun onFailure(call: Call<MovieResult?>, t: Throwable) {
                 t.printStackTrace()
-                Toast.makeText(this@SelectedGenreActivity, "Network request error occured, check LOG", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@SelectedGenreActivity, "Hálózati hiba lépett fel! Ellenőrizd az internet kapcsolatod!", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -204,12 +210,14 @@ class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     if (isLastVisible()) {
-                        binding.cvProgress.visibility = View.VISIBLE
-                        binding.rvSelectedGenre.removeOnScrollListener(this)
-                        page++
-                        val layoutManager = binding.rvSelectedGenre.layoutManager as LinearLayoutManager      // continue scrolling from the current position
-                        val pos = layoutManager.findFirstVisibleItemPosition()
-                        loadGenreMovies(pos)
+                        if (page + 1 <= totalPages) {
+                            binding.cvProgress.visibility = View.VISIBLE
+                            binding.rvSelectedGenre.removeOnScrollListener(this)
+                            page++
+                            val layoutManager = binding.rvSelectedGenre.layoutManager as LinearLayoutManager      // continue scrolling from the current position
+                            val pos = layoutManager.findFirstVisibleItemPosition()
+                            loadGenreMovies(pos)
+                        }
                     }
                 }
             }

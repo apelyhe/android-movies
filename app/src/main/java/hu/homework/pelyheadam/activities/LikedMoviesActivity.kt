@@ -11,10 +11,11 @@ import hu.homework.pelyheadam.data.MovieDatabase
 import hu.homework.pelyheadam.data.Result
 import hu.homework.pelyheadam.databinding.ActivityLikedMoviesBinding
 import hu.homework.pelyheadam.databinding.ActivityRecommendedBinding
+import hu.homework.pelyheadam.interfaces.InitializeBottomMenu
 import hu.homework.pelyheadam.interfaces.OnMovieClickListener
 import kotlin.concurrent.thread
 
-class LikedMoviesActivity : AppCompatActivity(), OnMovieClickListener {
+class LikedMoviesActivity : AppCompatActivity(), OnMovieClickListener, InitializeBottomMenu {
 
     private lateinit var binding: ActivityLikedMoviesBinding
     private lateinit var adapter: LikedMoviesAdapter
@@ -50,7 +51,7 @@ class LikedMoviesActivity : AppCompatActivity(), OnMovieClickListener {
 
     }
 
-    private fun initBottomMenu() {
+    override fun initBottomMenu() {
         binding.bottomNavigationView.menu.getItem(3).isChecked = true
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
             when(it.itemId){

@@ -42,7 +42,7 @@ class PopularAdapter(context: Context, private val listener: OnMovieClickListene
         val imageUri = Uri.parse("https://image.tmdb.org/t/p/original/" + movieItem!!.poster_path)
         Picasso.get().load(imageUri).into(holder.binding.ivPoster)
         holder.binding.tvTitle.text = movieItem.title
-        holder.binding.tvPopularity.text = movieItem.popularity.toString() + " szavazat"
+        holder.binding.tvPopularity.text = movieItem.popularity!!.toInt().toString() + " szavazat"
     }
 
     override fun getItemCount(): Int = movies.size

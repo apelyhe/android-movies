@@ -5,7 +5,6 @@ import hu.homework.pelyheadam.entities.Genre
 class GenreTypes {
     private var types = ArrayList<Genre>()
 
-    // which contains each genre with its ID
     // source: https://www.themoviedb.org/talk/5daf6eb0ae36680011d7e6ee
     init {
         types.add(Genre(28, "Akció"))
@@ -30,11 +29,11 @@ class GenreTypes {
 
     }
 
-    public fun getAllType() : ArrayList<Genre> {
+    fun getAllType() : ArrayList<Genre> {
         return types
     }
 
-    public fun getGenreById(id: Int) : String? {
+    fun getGenreById(id: Int) : String? {
         for (genre: Genre in types) {
             if (genre.id == id) {
                 return genre.name

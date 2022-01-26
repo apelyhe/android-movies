@@ -12,12 +12,13 @@ import com.squareup.picasso.Picasso
 import hu.homework.pelyheadam.R
 import hu.homework.pelyheadam.databinding.ActivityMovieDetailsBinding
 import hu.homework.pelyheadam.entities.MovieDetails
+import hu.homework.pelyheadam.interfaces.InitializeBottomMenu
 import hu.homework.pelyheadam.network.NetworkManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MovieDetailsActivity : AppCompatActivity() {
+class MovieDetailsActivity : AppCompatActivity(), InitializeBottomMenu {
 
     private lateinit var binding : ActivityMovieDetailsBinding
     private var movieId : Int = 0
@@ -59,7 +60,7 @@ class MovieDetailsActivity : AppCompatActivity() {
                 t: Throwable
             ) {
                 t.printStackTrace()
-                Toast.makeText(this@MovieDetailsActivity, "Network request error occured, check LOG", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MovieDetailsActivity, "Hálózati hiba lépett fel! Ellenőrizd az internet kapcsolatod!", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -71,13 +72,15 @@ class MovieDetailsActivity : AppCompatActivity() {
         Picasso.get().load(backdropImageUri).into(binding.ivBackdrop)
         Picasso.get().load(posterImageUri).into(binding.ivPoster)
         binding.tvRating.text = body.vote_average.toString() + " / 10"
-        binding.tvReleaseDate.text = "Megjelent: " + body.release_date
+
+        var date = body.release_date.split("-")
+        binding.tvReleaseDate.text = "Megjelenés: " + date[0] + "." + date[1] + "." + date[2] + "."
         binding.tvOverview.text = body.overview
         binding.tvOriginalTitle.text = body.original_title
         binding.tvTitle.text = body.title
     }
 
-    private fun initBottomMenu() {
+    override fun initBottomMenu() {
         binding.bottomNavigationView.menu.getItem(selectedItemId).isChecked = true
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
             when(it.itemId){

@@ -54,7 +54,6 @@ interface MovieApi {
         @Query("query") queryString: String?,
         @Query("language") language: String?,
         @Query("sort_by") sort_by: String,
-        @Query("vote_count.gte") vote_count_min: Int
     ) : Call<MovieResult?>?
 
 }

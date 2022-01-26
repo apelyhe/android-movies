@@ -9,9 +9,10 @@ import hu.homework.pelyheadam.R
 import hu.homework.pelyheadam.adapter.GenreAdapter
 import hu.homework.pelyheadam.databinding.ActivityGenreBinding
 import hu.homework.pelyheadam.entities.Genre
+import hu.homework.pelyheadam.interfaces.InitializeBottomMenu
 import hu.homework.pelyheadam.interfaces.OnGenreSelectedListener
 
-class GenreActivity : AppCompatActivity(), OnGenreSelectedListener {
+class GenreActivity : AppCompatActivity(), OnGenreSelectedListener, InitializeBottomMenu {
 
     private lateinit var binding: ActivityGenreBinding
     private lateinit var adapter : GenreAdapter
@@ -25,7 +26,7 @@ class GenreActivity : AppCompatActivity(), OnGenreSelectedListener {
         initRecycleView()
     }
 
-    private fun initBottomMenu() {
+    override fun initBottomMenu() {
         binding.bottomNavigationView.menu.getItem(2).isChecked = true
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
             when(it.itemId){

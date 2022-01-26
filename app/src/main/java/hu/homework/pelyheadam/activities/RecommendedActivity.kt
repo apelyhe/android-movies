@@ -19,6 +19,7 @@ import hu.homework.pelyheadam.databinding.ActivityRecommendedBinding
 import hu.homework.pelyheadam.data.Result
 import hu.homework.pelyheadam.databinding.RecommendedItemBinding
 import hu.homework.pelyheadam.entities.MovieResult
+import hu.homework.pelyheadam.interfaces.InitializeBottomMenu
 import hu.homework.pelyheadam.interfaces.OnMovieClickListener
 import hu.homework.pelyheadam.network.NetworkManager
 import kotlinx.coroutines.*
@@ -29,13 +30,14 @@ import java.util.*
 import kotlin.concurrent.thread
 import kotlin.random.Random
 
-class RecommendedActivity : AppCompatActivity(), OnMovieClickListener {
+class RecommendedActivity : AppCompatActivity(), OnMovieClickListener, InitializeBottomMenu {
 
     private lateinit var binding: ActivityRecommendedBinding
     private lateinit var adapter: RecommendAdapter
     private lateinit var rowBinding: RecommendedItemBinding
     private lateinit var database: MovieDatabase
     private var page = 1
+    private var totalPages = -1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +52,7 @@ class RecommendedActivity : AppCompatActivity(), OnMovieClickListener {
     }
 
     // initialize click listener of the bottom menu
-    private fun initBottomMenu() {
+    override fun initBottomMenu() {
         binding.bottomNavigationView.menu.getItem(1).isChecked = true
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
             when(it.itemId){
@@ -121,6 +123,9 @@ class RecommendedActivity : AppCompatActivity(), OnMovieClickListener {
 
                 Log.d(ContentValues.TAG, "onResponse: " + response.code())
                 if (response.isSuccessful) {
+                    if (response.body()?.total_pages == -1) {
+                        totalPages = response.body()?.total_pages!!
+                    }
                     if (response.body()?.results?.size == 0) {
                         Toast.makeText(this@RecommendedActivity, "Ehhez a filmhez nem tartoznak ajánlások!", Toast.LENGTH_LONG).show()
                     }
@@ -199,7 +204,7 @@ class RecommendedActivity : AppCompatActivity(), OnMovieClickListener {
 
             override fun onFailure(call: Call<MovieResult?>, t: Throwable) {
                 t.printStackTrace()
-                Toast.makeText(this@RecommendedActivity, "Network request error occured, check LOG", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@RecommendedActivity, "Hálózati hiba lépett fel! Ellenőrizd az internet kapcsolatod!", Toast.LENGTH_LONG).show()
             }
 
         })
@@ -226,12 +231,14 @@ class RecommendedActivity : AppCompatActivity(), OnMovieClickListener {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     if (isLastVisible()) {
-                        binding.cvProgress.visibility = View.VISIBLE
-                        binding.rvRecommend.removeOnScrollListener(this)
-                        page++
-                        val layoutManager = binding.rvRecommend.layoutManager as LinearLayoutManager      // continue scrolling from the current position
-                        val pos = layoutManager.findFirstVisibleItemPosition()
-                        loadRecommendedMovies(pos)
+                        if (page+1 <= totalPages) {
+                            binding.cvProgress.visibility = View.VISIBLE
+                            binding.rvRecommend.removeOnScrollListener(this)
+                            page++
+                            val layoutManager = binding.rvRecommend.layoutManager as LinearLayoutManager      // continue scrolling from the current position
+                            val pos = layoutManager.findFirstVisibleItemPosition()
+                            loadRecommendedMovies(pos)
+                        }
                     }
                 }
             }
