@@ -1,12 +1,11 @@
 package hu.homework.pelyheadam.entities
 
-// kotlin data class generated from json file
-// source: https://plugins.jetbrains.com/plugin/9960-json-to-kotlin-class-jsontokotlinclass-
 data class MovieDetails(
     val adult: Boolean,
     val backdrop_path: String,
     val belongs_to_collection: Any,
     val budget: Int,
+    val credits: Credits,
     val genres: List<Genre>,
     val homepage: String,
     val id: Int,
@@ -15,7 +14,7 @@ data class MovieDetails(
     val original_title: String,
     val overview: String,
     val popularity: Double,
-    val poster_path: Any,
+    val poster_path: String,
     val production_companies: List<ProductionCompany>,
     val production_countries: List<ProductionCountry>,
     val release_date: String,

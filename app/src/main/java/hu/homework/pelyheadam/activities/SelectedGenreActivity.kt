@@ -46,10 +46,10 @@ class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener, Initial
         genreId = intent.getIntExtra("GENRE_ID", 0)
 
         val types = GenreTypes()
-        //Log.e(TAG, "ID:    " + genreId)
+
         supportActionBar?.setTitle(types.getGenreById(genreId))
-        initBottomMenu()
         initRecyclerView()
+        initBottomMenu()
     }
 
     override fun initBottomMenu() {
@@ -132,9 +132,6 @@ class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener, Initial
             override fun onResponse(call: Call<MovieResult?>, response: Response<MovieResult?>) {
                 Log.d(ContentValues.TAG, "onResponse: " + response.code())
                 if (response.isSuccessful) {
-                    if (totalPages == -1) {
-                        totalPages = response.body()?.total_pages!!
-                    }
                     displaySearchResults(response.body())
                 } else {
                     Log.d(ContentValues.TAG, "Error: " + response.message())
@@ -171,6 +168,9 @@ class SelectedGenreActivity : AppCompatActivity(), OnMovieClickListener, Initial
             ) {
                 Log.d(ContentValues.TAG, "onResponse: " + response.code())
                 if (response.isSuccessful) {
+                    if (totalPages == -1) {
+                        totalPages = response.body()?.total_pages!!
+                    }
                     displayMovies(response.body(), position)
                 } else {
                     Log.d(ContentValues.TAG, "Error: " + response.message())

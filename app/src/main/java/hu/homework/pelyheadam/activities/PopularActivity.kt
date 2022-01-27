@@ -1,5 +1,6 @@
 package hu.homework.pelyheadam.activities
 
+import android.content.ContentValues
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -123,9 +124,6 @@ class PopularActivity() : AppCompatActivity(), OnMovieClickListener, InitializeB
             override fun onResponse(call: Call<MovieResult?>, response: Response<MovieResult?>) {
                 Log.d(TAG, "onResponse: " + response.code())
                 if (response.isSuccessful) {
-                    if (totalPages == -1) {
-                        totalPages = response.body()?.total_pages!!
-                    }
                     displaySearchResults(response.body())
                 } else {
                     Log.d(TAG, "Error: " + response.message())
@@ -164,6 +162,9 @@ class PopularActivity() : AppCompatActivity(), OnMovieClickListener, InitializeB
             ) {
                 Log.d(TAG, "onResponse: " + response.code())
                 if (response.isSuccessful) {
+                    if (totalPages == -1) {
+                        totalPages = response.body()?.total_pages!!
+                    }
                     displayPopularMovies(response.body(), position)
                 } else {
                     Log.d(TAG, "Error: " + response.message())
@@ -206,6 +207,7 @@ class PopularActivity() : AppCompatActivity(), OnMovieClickListener, InitializeB
                 if (dy > 0) {
                     // if the last item is visible, show the progress bar, and request the next page
                     if (isLastVisible()) {
+                        Log.e(ContentValues.TAG, "page: " + page + " total: " + totalPages)
                         if (page + 1 <= totalPages) {
                             binding.cvProgress.visibility = View.VISIBLE
                             binding.rvPopular.removeOnScrollListener(this)

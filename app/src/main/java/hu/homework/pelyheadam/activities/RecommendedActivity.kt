@@ -123,11 +123,11 @@ class RecommendedActivity : AppCompatActivity(), OnMovieClickListener, Initializ
 
                 Log.d(ContentValues.TAG, "onResponse: " + response.code())
                 if (response.isSuccessful) {
-                    if (response.body()?.total_pages == -1) {
+                    if (totalPages == -1) {
                         totalPages = response.body()?.total_pages!!
                     }
                     if (response.body()?.results?.size == 0) {
-                        Toast.makeText(this@RecommendedActivity, "Ehhez a filmhez nem tartoznak ajánlások!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@RecommendedActivity, "Nincs elég adatunk, hogy filmeket ajánljunk a(z) " + r.title + " alapján.", Toast.LENGTH_LONG).show()
                     }
                     displayRecommendedMovies(response.body(), position)
                 } else {
@@ -212,7 +212,6 @@ class RecommendedActivity : AppCompatActivity(), OnMovieClickListener, Initializ
 
     private fun displaySearchResults(body : MovieResult?) {
         binding.cvProgress.visibility = View.GONE
-
         adapter.removeAll()
 
         for(movie : Result in body?.results!!) {
@@ -231,6 +230,7 @@ class RecommendedActivity : AppCompatActivity(), OnMovieClickListener, Initializ
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     if (isLastVisible()) {
+                        Log.e(ContentValues.TAG, "page: " + page + " total: " + totalPages)
                         if (page+1 <= totalPages) {
                             binding.cvProgress.visibility = View.VISIBLE
                             binding.rvRecommend.removeOnScrollListener(this)

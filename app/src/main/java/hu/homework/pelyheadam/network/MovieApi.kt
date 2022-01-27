@@ -33,7 +33,8 @@ interface MovieApi {
     fun getDetailsById(
         @Path("movie_id") movie_id: Int,
         @Query("api_key") api_key: String,
-        @Query("language") language: String?
+        @Query("language") language: String?,
+        @Query("append_to_response") append_to_response : String?
     ) : Call<MovieDetails?>?
 
     //https://api.themoviedb.org/3/discover/movie?api_key=XXXXX&with_genres=27

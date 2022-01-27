@@ -11,6 +11,9 @@ import android.widget.Toast
 import com.squareup.picasso.Picasso
 import hu.homework.pelyheadam.R
 import hu.homework.pelyheadam.databinding.ActivityMovieDetailsBinding
+import hu.homework.pelyheadam.databinding.CastItemBinding
+import hu.homework.pelyheadam.entities.Cast
+import hu.homework.pelyheadam.entities.Crew
 import hu.homework.pelyheadam.entities.MovieDetails
 import hu.homework.pelyheadam.interfaces.InitializeBottomMenu
 import hu.homework.pelyheadam.network.NetworkManager
@@ -21,6 +24,7 @@ import retrofit2.Response
 class MovieDetailsActivity : AppCompatActivity(), InitializeBottomMenu {
 
     private lateinit var binding : ActivityMovieDetailsBinding
+    private lateinit var castBinding: CastItemBinding
     private var movieId : Int = 0
     private var selectedItemId : Int = 0
 
@@ -37,7 +41,6 @@ class MovieDetailsActivity : AppCompatActivity(), InitializeBottomMenu {
         movieId = intent.getIntExtra("MOVIE_ID", 0)
         selectedItemId = intent.getIntExtra("SELECTED_ITEM", 0)
         initBottomMenu()
-
         loadScreen()
     }
 
@@ -78,6 +81,45 @@ class MovieDetailsActivity : AppCompatActivity(), InitializeBottomMenu {
         binding.tvOverview.text = body.overview
         binding.tvOriginalTitle.text = body.original_title
         binding.tvTitle.text = body.title
+
+
+        for (i in 0..5) {
+            if (i+1 > body.credits.cast.size)
+                break
+            castBinding = CastItemBinding.inflate(layoutInflater)
+            if (body.credits.cast[i].profile_path == null) {
+                castBinding.ivProfilePic.setImageResource(R.drawable.blank)
+            } else {
+                val imageUri = Uri.parse("https://image.tmdb.org/t/p/original/" + body.credits.cast[i].profile_path)
+                Picasso.get().load(imageUri).into(castBinding.ivProfilePic)
+            }
+            castBinding.tvActorName.text = body.credits.cast[i].name
+            castBinding.tvCharacterName.text = body.credits.cast[i].character
+            binding.castList.addView(castBinding.root)
+        }
+
+        for (c : Crew in body.credits.crew) {
+            castBinding = CastItemBinding.inflate(layoutInflater)
+            if (c.job == "Writer" || c.job == "Director" || c.job == "Producer") {
+                if (c.profile_path == null) {
+                    castBinding.ivProfilePic.setImageResource(R.drawable.blank)
+                } else {
+                    val imageUri = Uri.parse("https://image.tmdb.org/t/p/original/" + c.profile_path)
+                    Picasso.get().load(imageUri).into(castBinding.ivProfilePic)
+                }
+                castBinding.tvActorName.text = c.name
+                if (c.job == "Writer") {
+                    castBinding.tvCharacterName.text = "Író"
+                }
+                else if (c.job == "Producer") {
+                    castBinding.tvCharacterName.text = "Gyártásvezető"
+                }
+                else
+                    castBinding.tvCharacterName.text = "Rendező"
+
+                binding.crewList.addView(castBinding.root)
+            }
+        }
     }
 
     override fun initBottomMenu() {

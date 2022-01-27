@@ -6,4 +6,6 @@
     <string name="watchit">watch IT.</string>
     <string name="popular">Felkapott</string>
     <string name="liked">Kedvelt</string>
+    <string name="actors">Szereplők</string>
+    <string name="crew">Stáb</string>
 </resources>

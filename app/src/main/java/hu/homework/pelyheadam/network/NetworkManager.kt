@@ -31,11 +31,11 @@ object NetworkManager {
     }
 
     fun getDetailsById(movie_id: Int) : Call<MovieDetails?>? {
-        return movieApi.getDetailsById(movie_id, API_KEY, "hu")
+        return movieApi.getDetailsById(movie_id, API_KEY, "hu", "credits")
     }
 
     fun getMoviesByGenre(genreId : Int, page : Int) : Call<MovieResult?>? {
-        return movieApi.getMoviesByGenre(API_KEY, "hu", page, genreId, "vote_average.desc", 300)
+        return movieApi.getMoviesByGenre(API_KEY, "hu", page, genreId, "vote_average.desc", 1000)
     }
 
     fun searchByTitle(queryString: String?) : Call<MovieResult?>? {
